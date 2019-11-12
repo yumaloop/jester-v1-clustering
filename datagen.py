@@ -74,6 +74,7 @@ class BatchGenerator(keras.utils.Sequence):
         x_batch = x_batch.astype('float32') / 255.0
         y_batch = np.asarray(y_batch)
 
+        # videos, videos
         return x_batch, x_batch
 
     def __len__(self):
