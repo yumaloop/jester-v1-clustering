@@ -18,7 +18,6 @@ encoder.summary()
 
 bgen = BatchGenerator(video_path="./data/video/20bn-jester-v1", img_size=(48, 48), batch_size=1, use_padding=True)
 
-
 df_train = pd.read_csv("./data/train.csv", sep=";", header=None, names=["frame_id", "jester name"])                                                                                            
 num_train = len(df_train)
 

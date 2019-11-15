@@ -23,6 +23,7 @@ class BatchGenerator(keras.utils.Sequence):
         le = le.fit(self.df_train['jester name'])
         self.df_train['label'] = le.transform(self.df_train['jester name'])
 
+        self.video_path = video_path
         self.num = len(self.df_train)
         self.batch_size = batch_size
         self.img_size = img_size
@@ -45,8 +46,8 @@ class BatchGenerator(keras.utils.Sequence):
         
         for index, row in self.df_train[batch_from:batch_to].iterrows(): 
             video=[]
-            for i, img_filename in enumerate(os.listdir("./data/video/20bn-jester-v1/"+str(row["frame_id"]))):
-                img_path = "./data/video/20bn-jester-v1/"+str(row["frame_id"])+"/"+str(img_filename)
+            for i, img_filename in enumerate(os.listdir(os.path.join(self.video_path, str(row["frame_id"])))):
+                img_path = os.path.join(self.video_path, str(row["frame_id"]), str(img_filename))
                 img_pil = Image.open(img_path).resize(self.img_size)
                 img_arr = np.array(img_pil)
                 video.append(img_arr)

@@ -4,7 +4,7 @@ import datetime
 import keras
 import numpy as np
 import pandas as pd
-from dategen import BatchGenerator
+from datagen import BatchGenerator
 from convlstm_autoencoder import ConvLSTMAutoEncoder
 
 
@@ -14,7 +14,7 @@ model.summary()
 
 train_batch_generator = BatchGenerator(video_path="./data/video/20bn-jester-v1",
                                        img_size=(48, 48), 
-                                       batch_size=8)
+                                       batch_size=4)
 
 date_string = datetime.datetime.now().strftime('%Y%m%d %H:%M:%S')
 os.mkdir('./log/'+date_string)
