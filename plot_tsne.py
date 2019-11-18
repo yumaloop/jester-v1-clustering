@@ -7,14 +7,12 @@ from sklearn.manifold import TSNE
 from datagen import BatchGenerator
 from convlstm_autoencoder import ConvLSTMAutoEncoder
 
+bg = BatchGenerator(video_path="./data/latent", img_size=(48,48))
 
-bg = BatchGenerator(video_path="./data/latent", img_size=(12,12))
-# bg = BatchGenerator()
-latent, _ = bg.__getitem__(1)
-print(latent.shape)
+X_latent, _ = bg.__getitem__(1)
+print(X_latent.shape)
 
-# x = 
-# tsne = TSNE(n_components=2, random_state=0)
-# X_reduced = tsne.fit_transform(X)
+tsne = TSNE(n_components=2, random_state=0)
+X_plot = tsne.fit_transform(X_latent)
 
 
