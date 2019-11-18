@@ -12,7 +12,7 @@ model = keras.models.load_model("./log/base/bestweights.hdf5")
 model.summary()
 
 # build model
-layer_name = 'conv3d_1'
+layer_name = 'lambda_3'
 encoder = keras.models.Model(inputs=model.input, outputs=model.get_layer(layer_name).output)
 encoder.summary()
 
