@@ -84,34 +84,34 @@ def ConvLSTMAutoEncoder(input_shape=(50, 48, 48, 3)):
     input_seq_rev = keras.layers.Lambda(lambda x: keras.backend.reverse(x, axes=1))(input_seq)
     input_seq_rev = keras.layers.Lambda(lambda x: x[:, :-1])(input_seq_rev) 
 
-    h1_seq = keras.layers.ConvLSTM2D(filters=64, kernel_size=(3, 3), padding='same', return_sequences=True)(input_seq)
+    h1_seq, state1_h, state1_c  = keras.layers.ConvLSTM2D(filters=64, kernel_size=(3, 3), padding='same', return_state=True, return_sequences=True)(input_seq)
     h1_seq = keras.layers.BatchNormalization()(h1_seq)
     # h1_seq = keras.layers.MaxPooling3D(pool_size=(1, 2, 2))(h1_seq)
 
-    h2_seq = keras.layers.ConvLSTM2D(filters=64, kernel_size=(3, 3), padding='same', return_sequences=True)(h1_seq)
+    h2_seq, state2_h, state2_c = keras.layers.ConvLSTM2D(filters=64, kernel_size=(3, 3), padding='same', return_state=True, return_sequences=True)(h1_seq)
     h2_seq = keras.layers.BatchNormalization()(h2_seq)
     # h2_seq = keras.layers.MaxPooling3D(pool_size=(1, 2, 2))(h2_seq)
 
-    latent = keras.layers.ConvLSTM2D(filters=3, kernel_size=(3, 3), padding='same', return_sequences=False)(h2_seq)
+    latent, state3_h, state3_c = keras.layers.ConvLSTM2D(filters=3, kernel_size=(3, 3), padding='same', return_state=True, return_sequences=False)(h2_seq)
     latent = keras.layers.Lambda(lambda x: keras.backend.expand_dims(x, axis=1))(latent)
 
     # -------------------------------
     # Decoder: (ConvLSTM AutoEncoder)
     # -------------------------------
     input_latent = keras.layers.concatenate([latent, input_seq_rev], axis=1)
-    h3_seq = keras.layers.ConvLSTM2D(filters=64, kernel_size=(3, 3), padding='same', return_sequences=True)(input_latent)
-    h3_seq = keras.layers.BatchNormalization()(h3_seq)
-    # h3_seq = keras.layers.UpSampling3D(size=(1, 2, 2))(h3_seq)
-
-    h4_seq = keras.layers.ConvLSTM2D(filters=64, kernel_size=(3, 3), padding='same', return_sequences=True)(h3_seq)
+    h4_seq, state4_h, state4_c = keras.layers.ConvLSTM2D(filters=64, kernel_size=(3, 3), padding='same', return_state=True, return_sequences=True)(input_latent)
     h4_seq = keras.layers.BatchNormalization()(h4_seq)
     # h4_seq = keras.layers.UpSampling3D(size=(1, 2, 2))(h4_seq)
 
-    h5_seq = keras.layers.ConvLSTM2D(filters=3, kernel_size=(3, 3), padding='same', return_sequences=True)(h4_seq)
+    h5_seq, state5_h, state5_c = keras.layers.ConvLSTM2D(filters=64, kernel_size=(3, 3), padding='same', return_state=True, return_sequences=True)(h4_seq)
     h5_seq = keras.layers.BatchNormalization()(h5_seq)
-    # h4_seq = keras.layers.UpSampling3D(size=(1, 2, 2))(h4_seq)
+    # h5_seq = keras.layers.UpSampling3D(size=(1, 2, 2))(h5_seq)
 
-    output_seq = keras.layers.Lambda(lambda x: keras.backend.reverse(x, axes=1))(h5_seq)
+    h6_seq, state6_h, state6_c = keras.layers.ConvLSTM2D(filters=3, kernel_size=(3, 3), padding='same', return_state=True, return_sequences=True)(h5_seq)
+    h6_seq = keras.layers.BatchNormalization()(h6_seq)
+    # h6_seq = keras.layers.UpSampling3D(size=(1, 2, 2))(h6_seq)
+
+    output_seq = keras.layers.Lambda(lambda x: keras.backend.reverse(x, axes=1))(h6_seq)
     # output_seq = keras.layers.Conv3D(filters=3, kernel_size=(3,3,3), padding='same')(output_seq)
     
     model = keras.models.Model(input=input_seq, output=output_seq, name="ConvLSTMAutoEncoder")

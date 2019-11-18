@@ -4,7 +4,7 @@ import datetime
 import keras
 import numpy as np
 import pandas as pd
-from datagen import BatchGenerator
+from datagen import BatchGenerator, BatchDiffGenerator
 from convlstm_autoencoder import ConvLSTMAutoEncoder
 
 
@@ -12,7 +12,7 @@ model = ConvLSTMAutoEncoder(input_shape=(50, 48, 48, 3))
 model.compile(loss='mse', optimizer=keras.optimizers.Adam())
 model.summary()
 
-train_batch_generator = BatchGenerator(video_path="./data/video/20bn-jester-v1",
+train_batch_generator = BatchDiffGenerator(video_path="./data/video/20bn-jester-v1",
                                        img_size=(48, 48), 
                                        batch_size=4)
 

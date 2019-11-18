@@ -6,9 +6,11 @@ import numpy as np
 import pandas as pd
 from tqdm import tqdm
 from datagen import BatchGenerator
+from convlstm_autoencoder import ConvLSTMAutoEncoder
 
 # Load model
-model = keras.models.load_model("./log/base/bestweights.hdf5")
+model = ConvLSTMAutoEncoder(input_shape=(50, 48, 48, 3))
+model.load_weights("./log/base/bestweights.hdf5")
 model.summary()
 
 # build model
@@ -17,8 +19,7 @@ encoder = keras.models.Model(inputs=model.input, outputs=model.get_layer(layer_n
 encoder.summary()
 
 bgen = BatchGenerator(video_path="./data/video/20bn-jester-v1", img_size=(48, 48), batch_size=1, use_padding=True)
-
-df_train = pd.read_csv("./data/train.csv", sep=";", header=None, names=["frame_id", "jester name"])                                                                                            
+df_train = pd.read_csv("./data/train.csv", sep=";", header=None, names=["frame_id", "jester name"])                                                                           
 num_train = len(df_train)
 
 for id_ in tqdm(range(num_train)):
@@ -28,7 +29,10 @@ for id_ in tqdm(range(num_train)):
     os.mkdir('./data/latent/'+str(frame_id))
     hidden_output = encoder.predict(video)
 
-    for i in range(50):
-        lat_img = hidden_output[0][i] * 255.
-        lat_img = (lat_img - lat_img.min()) / (lat_img.max() - lat_img.min())
-        cv2.imwrite('./data/latent/'+str(frame_id)+'/{:0=5}.jpg'.format(int(i)), lat_img)
+    # print(hidden_output[0][0].shape) --> (48, 48, 3)
+    
+    lat_img = hidden_output[0][0]
+    lat_img = (lat_img - lat_img.min()) / (lat_img.max() - lat_img.min())
+    lat_img = lat_img * 255.
+
+    cv2.imwrite('./data/latent/'+str(frame_id)+'/lat.jpg', lat_img)
