@@ -4,17 +4,18 @@ import datetime
 import keras
 import numpy as np
 import pandas as pd
-from datagen import BatchGenerator, BatchDiffGenerator
+from datagen import BatchGenerator, BatchGenerator
 from convlstm_autoencoder import ConvLSTMAutoEncoder
 
 
-model = ConvLSTMAutoEncoder(input_shape=(50, 48, 48, 3))
+model = ConvLSTMAutoEncoder(input_shape=(None, 48, 48, 3))
 model.compile(loss='mse', optimizer=keras.optimizers.Adam())
 model.summary()
 
-train_batch_generator = BatchDiffGenerator(video_path="./data/video/20bn-jester-v1",
+train_batch_generator = BatchGenerator(video_path="./data/video/20bn-jester-v1",
                                        img_size=(48, 48), 
-                                       batch_size=4)
+                                       batch_size=4,
+                                       use_padding=True)
 
 date_string = datetime.datetime.now().strftime('%Y%m%d %H:%M:%S')
 os.mkdir('./log/'+date_string)

@@ -5,12 +5,12 @@ import keras
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
-from datagen import BatchGenerator
+from datagen import BatchGenerator, BatchDiffGenerator
 from convlstm_autoencoder import ConvLSTMAutoEncoder
 
 # Load model
 model = ConvLSTMAutoEncoder(input_shape=(50, 48, 48, 3))
-model.load_weights("./log/base/bestweights.hdf5")
+model.load_weights("./log/convlstmae_diff/bestweights.hdf5")
 model.summary()
 
 # build model
@@ -18,7 +18,7 @@ layer_name = 'lambda_3'
 encoder = keras.models.Model(inputs=model.input, outputs=model.get_layer(layer_name).output)
 encoder.summary()
 
-bgen = BatchGenerator(video_path="./data/video/20bn-jester-v1", img_size=(48, 48), batch_size=1, use_padding=True)
+bgen = BatchDiffGenerator(video_path="./data/video/20bn-jester-v1", img_size=(48, 48), batch_size=1, use_padding=True)
 df_train = pd.read_csv("./data/train.csv", sep=";", header=None, names=["frame_id", "jester name"])                                                                           
 num_train = len(df_train)
 
